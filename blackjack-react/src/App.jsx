@@ -24,8 +24,16 @@ const App = () => {
 
         setPlayer(playerHand);
         setDealer(dealerHand);
-        setGameOver(false);
-        setWinner(null);
+
+        console.log(calculateHandValue(playerHand));
+
+        if (calculateHandValue(playerHand) === 21){
+            setGameOver(true);
+            setWinner("Player");
+        } else {
+            setGameOver(false);
+            setWinner(null);
+        }
     }
 
     const hit = () => {
