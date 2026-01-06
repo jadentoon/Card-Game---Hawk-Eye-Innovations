@@ -78,7 +78,7 @@ const App = () => {
 
                 <button
                     onClick={hit}
-                    disabled={gameOver || !deck}
+                    disabled={gameOver || !deck || calculateHandValue(player) === 21}
                     className='text-3xl font-bold px-4 py-2 border-[5px] rounded-[15px]
                                 bg-black hover:bg-white hover:text-black
                                 disabled:bg-gray-500 disabled:text-gray-300 disabled:border-gray-400 
