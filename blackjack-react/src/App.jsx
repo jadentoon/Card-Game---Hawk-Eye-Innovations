@@ -112,7 +112,7 @@ const App = () => {
                 </div>
                 <div className='flex justify-center flex-wrap gap-2'>
                     {dealer.map((card, i) => (
-                        <Card key={i} card={card}/>
+                        <Card key={i} card={card} hidden={!gameOver && i === 0}/>
                     ))}
                 </div>
             </div>
