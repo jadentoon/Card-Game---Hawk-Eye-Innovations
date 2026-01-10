@@ -1,0 +1,206 @@
+import { useEffect, useState } from 'react'
+import { Deck } from './game/deck';
+import Card from './Card';
+import {
+    calculateHandValue,
+    isBust,
+    dealerShouldHit,
+    determineWinner
+} from './game/blackjack';
+
+const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
+    const [deck, setDeck] = useState(null);
+    const [player, setPlayer] = useState([]);
+    const [dealer, setDealer] = useState([]);
+    const [gameOver, setGameOver] = useState(false);
+    const [winner, setWinner] = useState(null);
+    const [isBlackjack, setIsBlackjack] = useState(false);
+
+    const [displayBet, setDisplayBet] = useState(Number(bet).toFixed(2));
+    const [moneyChange, setMoneyChange] = useState(null); // tracks money won/lost
+
+    useEffect(() => {
+        setMoney(money - Number(bet));
+        deal();
+    }, [])
+
+    useEffect(() => {
+        if (!gameOver || !winner) return;
+
+        const numericBet = Number(bet);
+        let change = 0;
+
+        if (winner === "Player") {
+            change = isBlackjack ? numericBet * 1.5 : numericBet; 
+        } else if (winner === "Tie") {
+            change = 0; 
+        } else {
+            change = -numericBet; 
+        }
+
+        setMoneyChange(change);
+
+        setMoney(prevMoney => parseFloat((prevMoney + numericBet + change).toFixed(2)));
+    }, [gameOver, winner, isBlackjack])
+
+    const deal = () => {
+        const newDeck = new Deck();
+        setDeck(newDeck);
+
+        const playerHand = [newDeck.draw(), newDeck.draw()];
+        const dealerHand = [newDeck.draw(), newDeck.draw()];
+
+        setPlayer(playerHand);
+        setDealer(dealerHand);
+
+        if (calculateHandValue(playerHand) === 21) {
+            setGameOver(true);
+            setWinner("Player");
+            setIsBlackjack(true);
+        } else {
+            setGameOver(false);
+            setWinner(null);
+            setIsBlackjack(false);
+        }
+    }
+
+    const hit = () => {
+        if (gameOver) return;
+
+        const newHand = [...player, deck.draw()];
+        setPlayer(newHand);
+        if (isBust(newHand)) {
+            setGameOver(true);
+            setWinner("Dealer");
+        }
+    }
+
+    const stand = () => {
+        let dealerHand = [...dealer];
+
+        while (dealerShouldHit(dealerHand)) {
+            dealerHand.push(deck.draw());
+        }
+
+        setDealer(dealerHand);
+        setGameOver(true);
+        setWinner(determineWinner(player, dealerHand));
+    }
+
+    const handleReset = () => {
+        setMoneyChange(null);
+        onReset();
+    }
+
+    return (
+        <div className='min-h-screen bg-green-800 text-white p-6'>
+            <div className='flex justify-center'>
+                <div className='px-4 w-3/5 bg-black border-[5px] border-white rounded-[15px] shadow-lg mr-5'>
+                    <h1 className='text-4xl font-bold text-center m-4'>
+                        Blackjack
+                    </h1>
+                </div>
+                <div className='px-4 w-2/5 bg-black border-[5px] border-white rounded-[15px] shadow-lg'>
+                    <h1 className='text-4xl font-bold text-center m-4'>
+                        £{Number(money).toFixed(2)}
+                    </h1>
+                </div>
+            </div>
+
+            <div className='flex justify-center gap-4 mb-6 pt-3'>
+                <button
+                    onClick={hit}
+                    disabled={gameOver || !deck || calculateHandValue(player) === 21}
+                    className='text-3xl font-bold px-4 py-2 border-[5px] rounded-[15px]
+                                bg-black hover:bg-white hover:text-black
+                                disabled:bg-gray-500 disabled:text-gray-300 disabled:border-gray-400 
+                                cursor-pointer disabled:cursor-not-allowed'>
+                    Hit
+                </button>
+
+                <button
+                    onClick={stand}
+                    disabled={gameOver || !deck}
+                    className='text-3xl font-bold px-4 py-2 border-[5px] rounded-[15px]
+                                bg-black hover:bg-white hover:text-black
+                                disabled:bg-gray-500 disabled:text-gray-300 disabled:border-gray-400 
+                                cursor-pointer disabled:cursor-not-allowed'>
+                    Stand
+                </button>
+
+                <button
+                    onClick={handleReset}
+                    disabled={!gameOver}
+                    className='text-3xl font-bold px-4 py-2 border-[5px] rounded-[15px]
+                                bg-black hover:bg-white hover:text-black
+                                disabled:bg-gray-500 disabled:text-gray-300 disabled:border-gray-400 
+                                cursor-pointer disabled:cursor-not-allowed w-1/5'>
+                    Reset
+                </button>
+            </div>
+
+            <div className='flex justify-center mb-4 gap-4'>
+                <div className="flex justify-center mb-4 gap-4">
+                    <div className="px-4 py-2 bg-black border-[5px] border-white rounded-[15px] shadow-lg">
+                        <h2 className="text-2xl font-bold text-center">
+                            Current Bet: £{displayBet}
+                        </h2>
+                    </div>
+
+                    {moneyChange !== null && (
+                        <div className={`px-4 py-2 border-[5px] border-white rounded-[15px] shadow-lg animate-pulse 
+                            ${moneyChange < 0 ? 'bg-red-600' : moneyChange === 0 ? 'bg-gray-400' :'bg-green-600'}`}>
+                            <h2 className="text-2xl font-bold text-center text-white">
+                                {moneyChange < 0 
+                                    ? '-£' +Math.abs(moneyChange).toFixed(2)
+                                    : moneyChange === 0 
+                                        ? '£' +moneyChange.toFixed(2)
+                                        : '+£' +moneyChange.toFixed(2)
+                                }
+                            </h2>
+                        </div>
+                    )}
+                </div>
+
+            </div>
+
+            {/* Player */}
+            <div className='mb-6'>
+                <div className='flex justify-center'>
+                    <h2 className='text-2xl mb-2 font-bold'>
+                        Player ({calculateHandValue(player)})
+                    </h2>
+                </div>
+                <div className='flex justify-center flex-wrap gap-2'>
+                    {player.map((card, i) => (
+                        <Card key={i} card={card} />
+                    ))}
+                </div>
+            </div>
+
+            {/* Dealer */}
+            <div>
+                <div className='flex justify-center'>
+                    <h2 className='text-2xl mb-2 font-bold'>
+                        Dealer ({gameOver ? calculateHandValue(dealer) : "?"})
+                    </h2>
+                </div>
+                <div className='flex justify-center flex-wrap gap-2'>
+                    {dealer.map((card, i) => (
+                        <Card key={i} card={card} hidden={!gameOver && i === 0} />
+                    ))}
+                </div>
+            </div>
+
+            <div className='mt-6 text-center text-2xl font-bold'>
+                {gameOver && (
+                    winner === "Tie"
+                        ? "It's a tie"
+                        : `${winner} wins!`
+                )}
+            </div>
+        </div>
+    )
+}
+
+export default PlayBlackjack;
