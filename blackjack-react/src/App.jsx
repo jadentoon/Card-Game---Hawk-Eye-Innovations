@@ -7,6 +7,11 @@ const App = () => {
     const [bet, setBet] = useState("");
     const [screen, setScreen] = useState("money"); // "money" | "game"
 
+    const restartGame = () => {
+        setMoney(100);
+        setBet("");
+    }
+
     return (
         <>
             {screen === "money" && (
@@ -15,6 +20,7 @@ const App = () => {
                     bet = {bet}
                     setBet = {setBet}
                     onBet = {() => setScreen ("game")}  
+                    onRestart={restartGame}
                 />
             )}
 
