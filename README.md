@@ -25,3 +25,41 @@ React GUI Version:
   - Reset functionality for new games.
   - Optional restart popup when the player runs out of money.
   - Mobile responsive design.
+
+# Technical Implementation
+Python Version:
+  - Classes: `Card`, `Deck`, `Hand`.
+  - Deck Management: Standard 52 cards, shuffled via `random.shuffle`.
+  - Game Logic: Hit/Stand, Dealer AI (hit < 17), bust handling, Ace value adjustment.
+  - Winner Determination: Compares player vs dealer hand values, detects ties.
+
+React Version:
+  - Components: `App`, `MoneyScreen`, `PlayBlackjack`, `Card`.
+  - State Management: `useState` and `useEffect` for hands, deck, money, bets and game over logic.
+  - Deck Logic: `Deck` class shuffles and draws cards dynamically.
+  - Animations: CSS transitions and `animate-pulse` for visual feedback on wins/losses/ties.
+  - Responsive Layout: TailwindCSS flex/grid used for player and dealer cards.
+
+#Setup Instructions
+Python CLI Version
+  - Ensure Python 3.x is installed.
+  - Navigate to Main folder.
+  - Run:
+      ```bash
+      python card_game.py
+      ```
+
+React GUI Version
+  - Ensure Node.js and npm are installed.
+  - Navigate to the React project folder.
+  - Install Dependencies:
+      ```bash
+      npm install
+      ```
+  - Start Development Server:
+      ```bash
+      npm run dev
+      ```
+
+# Demo
+  - Live Demo available at: https://card-game-hawk-eye-innovations.vercel.app/
