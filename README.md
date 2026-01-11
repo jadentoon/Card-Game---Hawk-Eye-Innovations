@@ -40,7 +40,7 @@ React Version:
   - Animations: CSS transitions and `animate-pulse` for visual feedback on wins/losses/ties.
   - Responsive Layout: TailwindCSS flex/grid used for player and dealer cards.
 
-#Setup Instructions
+# Setup Instructions
 Python CLI Version
   - Ensure Python 3.x is installed.
   - Navigate to Main folder.
