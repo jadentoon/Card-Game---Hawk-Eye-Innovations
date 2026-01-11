@@ -8,22 +8,54 @@ import {
     determineWinner
 } from './game/blackjack';
 
+/**
+ * PlayBlackjack Component
+ * -----------------------
+ * Component representing the main Blackjack game screen.
+ * 
+ * @param {number} money - The player's current balance.
+ * @param {number|string} bet - The current bet amount.
+ * @param {function} setMoney - Function to update the player's balance.
+ * @param {function} onReset - Callback to reset the game and return to the betting screen. 
+ */
 const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
+    /** @type {Deck|null} The deck of cards used in the game. */
     const [deck, setDeck] = useState(null);
+
+    /** @type {Card[]} Player's hand */
     const [player, setPlayer] = useState([]);
+
+    /** @type {Card[]} Dealer's hand */
     const [dealer, setDealer] = useState([]);
+
+    /** @type {boolean} Whether the game round is over */
     const [gameOver, setGameOver] = useState(false);
+
+    /** @type {"Player"|"Dealer"|"Tie"|null} The winner of the round */
     const [winner, setWinner] = useState(null);
+
+    /** @type {boolean} Whether the player got a blackjack */
     const [isBlackjack, setIsBlackjack] = useState(false);
 
+    /** @type {string} Formatted bet to display */
     const [displayBet, setDisplayBet] = useState(Number(bet).toFixed(2));
-    const [moneyChange, setMoneyChange] = useState(null); // tracks money won/lost
 
+    /** @type {number|null} Tracks money won/lost during the round */
+    const [moneyChange, setMoneyChange] = useState(null);
+
+    /**
+     * Runs on component mount.
+     * Deducts the bet from money and deals the initial cards.
+     */
     useEffect(() => {
         setMoney(money - Number(bet));
         deal();
-    }, [])
+    }, []);
 
+    /**
+     * Updates the player's money after the round ends.
+     * Calculates winnings/losses including blackjack multiplier.
+     */
     useEffect(() => {
         if (!gameOver || !winner) return;
 
@@ -31,7 +63,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
         let change = 0;
 
         if (winner === "Player") {
-            change = isBlackjack ? numericBet * 1.5 : numericBet; 
+            change = numericBet + (isBlackjack ? numericBet * 1.5 : numericBet); 
         } else if (winner === "Tie") {
             change = 0; 
         } else {
@@ -43,6 +75,10 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
         setMoney(prevMoney => parseFloat((prevMoney + numericBet + change).toFixed(2)));
     }, [gameOver, winner, isBlackjack])
 
+    /**
+     * Deals initial hands for the player and dealer.
+     * Automatically checks for player blackjack.
+     */
     const deal = () => {
         const newDeck = new Deck();
         setDeck(newDeck);
@@ -64,6 +100,10 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
         }
     }
 
+    /**
+     * Player takes a hit (draws one card).
+     * Ends the round if player busts.
+     */
     const hit = () => {
         if (gameOver) return;
 
@@ -75,6 +115,10 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
         }
     }
 
+    /**
+     * Player stands. Dealer plays automatically according to rules.
+     * Determines the winner at the end.
+     */
     const stand = () => {
         let dealerHand = [...dealer];
 
@@ -87,6 +131,9 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
         setWinner(determineWinner(player, dealerHand));
     }
 
+    /**
+     * Resets the current round and clears moneyChange animation.
+     */
     const handleReset = () => {
         setMoneyChange(null);
         onReset();
@@ -94,6 +141,8 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
 
     return (
         <div className='min-h-screen bg-green-800 text-white p-6'>
+
+            {/* Header */}
             <div className='flex justify-center'>
                 <div className='px-4 w-3/5 bg-black border-[5px] border-white rounded-[15px] shadow-lg mr-5'>
                     <h1 className='text-4xl font-bold text-center m-4'>
@@ -107,6 +156,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
                 </div>
             </div>
 
+            {/* Controls */}
             <div className='flex justify-center gap-4 mb-6 pt-3'>
                 <button
                     onClick={hit}
@@ -139,6 +189,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
                 </button>
             </div>
 
+            {/* Current bet & Money Change */}
             <div className='flex justify-center mb-4 gap-4'>
                 <div className="flex justify-center mb-4 gap-4">
                     <div className="px-4 py-2 bg-black border-[5px] border-white rounded-[15px] shadow-lg">
@@ -164,7 +215,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
 
             </div>
 
-            {/* Player */}
+            {/* Player Hand */}
             <div className='mb-6'>
                 <div className='flex justify-center'>
                     <h2 className='text-2xl mb-2 font-bold'>
@@ -178,7 +229,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
                 </div>
             </div>
 
-            {/* Dealer */}
+            {/* Dealer Hand */}
             <div>
                 <div className='flex justify-center'>
                     <h2 className='text-2xl mb-2 font-bold'>
@@ -192,6 +243,7 @@ const PlayBlackjack = ({ money, bet, setMoney, onReset }) => {
                 </div>
             </div>
 
+            {/* Result Message */}
             <div className='mt-6 text-center text-2xl font-bold'>
                 {gameOver && (
                     winner === "Tie"

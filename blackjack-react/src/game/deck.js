@@ -1,12 +1,25 @@
 import {Card} from "./card";
 
+/**
+ * Represents a standard 52-card deck for Blackjack.
+ * Handles deck creation, shuffling and drawing cards.
+ */
 export class Deck {
+    /**
+     * Creates a new shuffled deck.
+     */
     constructor() {
-        this.cards = []
+        /** @type {Card[]} Array of Card objects in the deck */
+        this.cards = [];
+
         this.buildDeck();
         this.shuffle();
     }
 
+    /**
+     * Builds a standard 52-card deck.
+     * Each suit contains cards 2-10, J, Q, K and A.
+     */
     buildDeck() {
         const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
         const ranks = [
@@ -23,6 +36,9 @@ export class Deck {
         }
     }
 
+    /**
+     * Shuffles the deck using the Fisher-Yates algorithm.
+     */
     shuffle() {
         for (let i = this.cards.length - 1; i > 0; i--){
             const j = Math.floor(Math.random() * (i + 1));
@@ -30,6 +46,10 @@ export class Deck {
         }
     }
 
+    /**
+     * Draws a card from the top of the deck.
+     * @returns {Card|undefined} The drawn card, or undefined if the deck is empty.
+     */
     draw() {
         return this.cards.pop();
     }
