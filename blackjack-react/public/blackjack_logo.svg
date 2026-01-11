@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="12" ry="12" fill="#000000"></rect>
+
+  <!-- Heart icon -->
+  <path d="M32 50s-16-12-16-24a8 8 0 0 1 16-4 8 8 0 0 1 16 4c0 12-16 24-16 24z" fill="#FF0000"></path>
+</svg>
