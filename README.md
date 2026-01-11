@@ -40,6 +40,18 @@ React Version:
   - Animations: CSS transitions and `animate-pulse` for visual feedback on wins/losses/ties.
   - Responsive Layout: TailwindCSS flex/grid used for player and dealer cards.
 
+# Decisions & Considerations 
+  - Dual Implementation - Python CLI demonstrates fundamental OOP and logic skills; React GUI demonstrates front-end skills and interactive design.
+  - Ace handling - Converted Ace value dynamically to prevent busts, following real Blackjack rules.
+  - Betting system - Allows players to manage money, place bets and restart when balance reaches zero.
+  - Component-based design - React components are modular for maintainability and easy extension.
+
+# Possible Improvements
+  - Add multiplayer support.
+  - Include sound effects and card flip animations for more engaging gameplay.
+  - Implement alternative card games such as Poker.
+  - Add custom card decks for extended gameplay.
+
 # Setup Instructions
 Python CLI Version
   - Ensure Python 3.x is installed.
